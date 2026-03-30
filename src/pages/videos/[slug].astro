@@ -1,0 +1,163 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, videos } from '../../data/site';
+
+export function getStaticPaths() {
+  return videos.map((item) => ({
+    params: { slug: item.slug },
+    props: { video: item }
+  }));
+}
+
+const { video } = Astro.props;
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '视频中心', href: '/videos/' },
+  { label: video.title, href: `/videos/${video.slug}/` }
+];
+
+const relatedVideos = videos.filter((item) => item.slug !== video.slug).slice(0, 2);
+---
+
+<Layout title={video.title} description={video.summary} image={video.image} breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">{video.category}</span>
+          <h1>{video.title}</h1>
+          <p>{video.summary}</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">观看提示</span>
+          <div class="page-head-tags">
+            <span>工位布局</span>
+            <span>动作节拍</span>
+            <span>设备形态</span>
+          </div>
+        </aside>
+      </div>
+      <div class="detail-layout">
+        <div class="detail-media">
+          <img src={video.image} alt={video.title} />
+        </div>
+        <article class="detail-panel detail-panel-product">
+          <span class="meta-kicker">视频说明</span>
+          <h2>先理解设备动作方式，再回到工件评估</h2>
+          <p>
+            该视频来源于原站视频展示内容，用于辅助客户理解设备动作方式、工位布局以及适配场景。建议结合工件实际需求再做试样判断。
+          </p>
+          <div class="detail-stat-grid">
+            <article class="detail-stat-card">
+              <strong>{video.category}</strong>
+              <span>视频分类</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>动作理解</strong>
+              <span>主要用途</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>试样判断</strong>
+              <span>下一步动作</span>
+            </article>
+          </div>
+          <div class="detail-list-block">
+            <strong>建议重点观察</strong>
+            <ul class="bullets detail-point-list">
+              <li>工件姿态和工位布置是否接近你的现场。</li>
+              <li>设备动作节拍、防护范围和上下料空间是否可落地。</li>
+              <li>这类视频适合方向判断，不等于最终交付方案。</li>
+            </ul>
+          </div>
+          <div class="stack-actions detail-actions">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href={`tel:${company.phone}`}>电话咨询</a>
+          </div>
+          <div class="detail-contact-strip">
+            <span>联系人：{company.contactPerson}</span>
+            <span>手机：{company.phone}</span>
+            <span>支持带工件沟通</span>
+          </div>
+        </article>
+      </div>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">视频播放</h2>
+              <p class="section-copy">首屏先展示稳定的设备海报图，播放器单独放在内容区，避免外部嵌入波动影响页面首屏体验。</p>
+            </div>
+            <a class="button-secondary" href={video.embedUrl} target="_blank" rel="noreferrer">打开原始视频</a>
+          </div>
+          <div class="detail-media">
+            <iframe src={video.embedUrl} title={video.title} allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="summary-grid company-summary-grid">
+          <article class="summary-card">
+            <span class="page-head-label">看视频时</span>
+            <h3>关注设备形态</h3>
+            <p>优先看专机、工站还是机器人形态是否接近你的工件处理方式和现场空间。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">看视频后</span>
+            <h3>回到工件本身</h3>
+            <p>最终仍然要结合工件材质、去除量、节拍和夹具条件，判断是否适合这个路线。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">建议动作</span>
+            <h3>带样件沟通</h3>
+            <p>如果视频里的动作方式和你的场景接近，最有效的下一步通常是带样件做进一步判断。</p>
+          </article>
+        </div>
+      </section>
+
+      {relatedVideos.length > 0 ? (
+        <section class="section">
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">相关视频</h2>
+                <p class="section-copy">继续看其他设备演示，方便横向判断不同工位形态和不同自动化深度的差异。</p>
+              </div>
+            </div>
+            <div class="video-grid">
+              {relatedVideos.map((item) => (
+                <article class="video-card">
+                  <img src={item.image} alt={item.title} loading="lazy" />
+                  <div class="video-card-body">
+                    <span class="card-tag">{item.category}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.summary}</p>
+                    <a href={`/videos/${item.slug}/`}>打开视频页</a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">WATCH AND MATCH</span>
+            <h2 class="detail-title">如果这段视频的动作方式接近你的现场</h2>
+            <p class="section-copy">把工件图片、当前人工处理方式和目标节拍一起发来，能更快判断这类设备是否值得继续评估。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href="/products/">查看产品方案</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

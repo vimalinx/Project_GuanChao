@@ -1,0 +1,82 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company } from '../data/site';
+import {
+  absoluteUrl,
+  buildBreadcrumbSchema,
+  buildOrganizationSchema,
+  buildWebsiteSchema
+} from '../lib/schema';
+import '../styles/global.css';
+
+type BreadcrumbItem = {
+  label: string;
+  href?: string;
+};
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  schema?: Record<string, unknown>[];
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+const {
+  title,
+  description = company.description,
+  image = '/media/hero-machine.jpg',
+  canonical,
+  schema = [],
+  breadcrumbs = []
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${company.legalName}` : `${company.legalName} | ${company.tagline}`;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, company.domain).toString();
+const structuredData = [
+  buildOrganizationSchema(),
+  Astro.url.pathname === '/' ? buildWebsiteSchema() : null,
+  breadcrumbs.length > 0
+    ? buildBreadcrumbSchema(
+        breadcrumbs.map((item) => ({
+          name: item.label,
+          url: absoluteUrl(item.href ?? Astro.url.pathname)
+        }))
+      )
+    : null,
+  ...schema
+].filter(Boolean);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="自动打磨机, 铸件自动打磨机, 数控自动抛光机, 打磨机器人, 非标自动化" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:site_name" content={company.legalName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={absoluteUrl(image)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteUrl(image)} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': structuredData })} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

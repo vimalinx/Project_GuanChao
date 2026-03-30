@@ -1,0 +1,42 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { newsArticles } from '../../data/site';
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '新闻动态', href: '/news/' }
+];
+---
+
+<Layout title="新闻动态" description="查看博恩科自动打磨机、打磨机器人和抛光设备相关资讯与实用文章。" breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <h1>新闻动态</h1>
+          <p>将原站文章重新整理为更清晰的阅读结构，保留“企业动态 / 新闻动态”双栏目视角。</p>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="news-grid">
+          {newsArticles.map((item) => (
+            <article class="news-card">
+              <img src={item.image} alt={item.title} loading="lazy" />
+              <div class="news-card-body">
+                <span class="card-tag">
+                  {item.category} · {item.publishedAt}
+                </span>
+                <h3>{item.title}</h3>
+                <p>{item.excerpt}</p>
+                <a href={`/news/${item.slug}/`}>阅读全文</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

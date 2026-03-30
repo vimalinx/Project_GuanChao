@@ -1,0 +1,159 @@
+---
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Layout from '../layouts/Layout.astro';
+import { company } from '../data/site';
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '关于博恩科', href: '/about/' }
+];
+---
+
+<Layout title="关于博恩科" description={company.description} breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">COMPANY PROFILE</span>
+          <h1>关于博恩科</h1>
+          <p>
+            {company.legalName}
+            专注铸件自动打磨机的研发、生产、销售和服务，服务重点集中在铸造件、压铸件自动打磨及相关非标自动化设备。
+          </p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">企业信息</span>
+          <div class="page-head-tags">
+            <span>{company.city}</span>
+            <span>铸件自动打磨与抛光</span>
+            <span>非标自动化定制</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="detail-layout">
+        <div class="detail-media company-media">
+          <img src="/media/company-workshop.jpg" alt="博恩科工厂与设备环境" />
+        </div>
+        <article class="detail-panel detail-panel-product">
+          <span class="meta-kicker">企业定位</span>
+          <h2>{company.tagline}</h2>
+          <p>{company.description}</p>
+          <div class="detail-stat-grid">
+            <article class="detail-stat-card">
+              <strong>铸件 / 压铸件</strong>
+              <span>重点服务对象</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>专机 + 机器人</strong>
+              <span>方案覆盖方式</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>试样评估</strong>
+              <span>前期沟通方式</span>
+            </article>
+          </div>
+          <div class="detail-list-block">
+            <strong>我们在做什么</strong>
+            <ul class="bullets detail-point-list">
+              {company.values.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <section class="section">
+        <div class="summary-grid company-summary-grid">
+          <article class="summary-card">
+            <span class="page-head-label">01</span>
+            <h3>核心对象</h3>
+            <p>铸造件、压铸件、五金件、电力金具等需要去飞边、毛刺、分型线和浇冒口清理的工件。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">02</span>
+            <h3>方案方式</h3>
+            <p>从标准机型、数控联动、机器人工站到夹具和防护单元的配套联调，覆盖不同自动化深度。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">03</span>
+            <h3>目标结果</h3>
+            <p>帮助企业降低人工强度和用工成本，提升产品质量、生产效率和现场稳定性。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">适合什么样的工厂</h2>
+              <p class="section-copy">如果你的现场正面临高粉尘、高劳动强度、打磨不稳定或难招熟练工，这类自动化设备通常更有价值。</p>
+            </div>
+          </div>
+          <div class="trust-grid">
+            <article class="trust-card">
+              <span class="page-head-label">批量稳定生产</span>
+              <p>工件规格较稳定、班产节拍明确，希望进一步减少返工和波动。</p>
+            </article>
+            <article class="trust-card">
+              <span class="page-head-label">升级高强度工位</span>
+              <p>人工打磨工位劳动强度大、粉尘多，管理和环保压力持续上升。</p>
+            </article>
+            <article class="trust-card">
+              <span class="page-head-label">需要非标整合</span>
+              <p>除了设备本体，还需要夹具、防护、除尘和局部自动化单元协同落地。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">从沟通到交付</h2>
+              <p class="section-copy">把制造业项目里最常见的四个动作说清楚，让企业介绍页也具备真实的交付逻辑。</p>
+            </div>
+          </div>
+          <div class="process-grid process-timeline">
+            <article class="process-step">
+              <span class="process-step-index">01</span>
+              <h3>工件沟通</h3>
+              <p>先确认工件材质、毛刺位置、当前工序和目标效果，判断适合专机还是机器人方案。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">02</span>
+              <h3>试样评估</h3>
+              <p>围绕去除量、路径、耗材和夹具形式做前期验证，减少项目落地后的试错。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">03</span>
+              <h3>方案联调</h3>
+              <p>把设备本体、防护、除尘、定位工装和节拍衔接一起调到稳定状态。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">04</span>
+              <h3>培训交付</h3>
+              <p>同步交付操作、点检和维护重点，方便现场尽快进入稳定量产节奏。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">FACTORY CONSULT</span>
+            <h2 class="detail-title">如果你在评估自动打磨改造</h2>
+            <p class="section-copy">把工件图片、节拍要求和现场限制条件一起发来，会比单纯问价格更快进入有效沟通。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href="/products/">查看产品方案</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

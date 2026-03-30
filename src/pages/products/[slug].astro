@@ -1,0 +1,259 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, products } from '../../data/site';
+import { absoluteUrl, buildFaqSchema, buildProductSchema } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product }
+  }));
+}
+
+const { product } = Astro.props;
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '产品方案', href: '/products/' },
+  { label: product.name, href: `/products/${product.slug}/` }
+];
+
+const canonical = absoluteUrl(`/products/${product.slug}/`);
+const summarySpecs = product.specs.slice(0, 3);
+const relatedProducts = products.filter((item) => item.slug !== product.slug && item.category === product.category).slice(0, 3);
+const deliverySteps = [
+  {
+    index: '01',
+    title: '工件沟通',
+    copy: '结合工件材质、毛刺位置、去除量和当前工序，先明确适配场景与目标节拍。'
+  },
+  {
+    index: '02',
+    title: '试样验证',
+    copy: '围绕工件结构、耗材与夹具形式确认加工路径，减少设备落地后的试错成本。'
+  },
+  {
+    index: '03',
+    title: '方案联调',
+    copy: '把设备本体、工装、防护与除尘等单元联调到稳定运行状态，再进入交付阶段。'
+  },
+  {
+    index: '04',
+    title: '培训交付',
+    copy: '交付时同步说明操作、点检与维护重点，方便现场尽快进入量产节奏。'
+  }
+];
+---
+
+<Layout
+  title={product.name}
+  description={product.summary}
+  image={product.image}
+  canonical={canonical}
+  breadcrumbs={breadcrumbs}
+  schema={[
+    buildProductSchema({
+      name: product.name,
+      description: product.summary,
+      image: product.image,
+      category: product.categoryName,
+      url: canonical
+    }),
+    buildFaqSchema(product.faq)
+  ]}
+>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">{product.categoryName}</span>
+          <h1>{product.name}</h1>
+          <p>{product.summary}</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">方案关键词</span>
+          <div class="page-head-tags">
+            {product.applications.slice(0, 3).map((item) => (
+              <span>{item}</span>
+            ))}
+          </div>
+        </aside>
+      </div>
+
+      <div class="detail-layout">
+        <div class="detail-media">
+          <img src={product.image} alt={product.name} />
+        </div>
+        <article class="detail-panel detail-panel-product">
+          <span class="meta-kicker">设备概览</span>
+          <h2>{product.excerpt}</h2>
+          <p>{product.description[0]}</p>
+          <div class="detail-stat-grid">
+            {summarySpecs.map((spec) => (
+              <article class="detail-stat-card">
+                <strong>{spec.value}</strong>
+                <span>{spec.label}</span>
+              </article>
+            ))}
+          </div>
+          <div class="detail-list-block">
+            <strong>适合处理的工况</strong>
+            <ul class="check-list detail-point-list">
+              {product.applications.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div class="stack-actions detail-actions">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href={`tel:${company.phone}`}>电话咨询</a>
+          </div>
+          <div class="detail-contact-strip">
+            <span>联系人：{company.contactPerson}</span>
+            <span>手机：{company.phone}</span>
+            <span>支持带工件试样沟通</span>
+          </div>
+        </article>
+      </div>
+
+      <section class="section">
+        <div class="split-layout">
+          <article class="section-block">
+            <h2>方案说明</h2>
+            <div class="plain-list">
+              {product.description.map((item) => (
+                <p>{item}</p>
+              ))}
+            </div>
+          </article>
+          <article class="section-block">
+            <h2>适用场景</h2>
+            <ul class="check-list">
+              {product.applications.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">关键规格</h2>
+              <p class="section-copy">把采购和技术最关心的规格、适配对象和交付边界集中在一个结构里，减少反复比对成本。</p>
+            </div>
+          </div>
+          <div class="spec-grid spec-grid-detail">
+            {product.specs.map((spec) => (
+              <article class="spec-card">
+                <span class="page-head-label">{spec.label}</span>
+                <h3>{spec.value}</h3>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <h2>设备亮点</h2>
+          <div class="trust-grid">
+            {product.highlights.map((item, index) => (
+              <article class="trust-card">
+                <span class="page-head-label">亮点 {String(index + 1).padStart(2, '0')}</span>
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">典型交付流程</h2>
+              <p class="section-copy">沿用制造业项目更常见的沟通与联调节奏，让设备方案、样件验证和交付动作更清晰。</p>
+            </div>
+          </div>
+          <div class="process-grid process-timeline">
+            {deliverySteps.map((step) => (
+              <article class="process-step">
+                <span class="process-step-index">{step.index}</span>
+                <h3>{step.title}</h3>
+                <p>{step.copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">常见问题</h2>
+              <p class="section-copy">把客户常问的设备选型、工艺适配和交付问题集中在这里，方便采购和技术人员快速判断。</p>
+            </div>
+          </div>
+          <div class="faq-grid">
+            {product.faq.map((item) => (
+              <article class="faq-card">
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {relatedProducts.length > 0 ? (
+        <section class="section">
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">相关方案</h2>
+                <p class="section-copy">继续查看同类产品方案，方便横向比较不同机型和不同自动化深度的适配范围。</p>
+              </div>
+            </div>
+            <div class="card-grid product-gallery-grid">
+              {relatedProducts.map((item) => (
+                <article class="product-card">
+                  <a class="product-card-media" href={`/products/${item.slug}/`} aria-label={`查看 ${item.name}`}>
+                    <img src={item.image} alt={item.name} loading="lazy" />
+                    <span class="product-card-overlay">
+                      <span>进一步了解</span>
+                    </span>
+                  </a>
+                  <div class="product-card-body">
+                    <span class="card-tag">{item.categoryName}</span>
+                    <h3>{item.name}</h3>
+                    <p class="product-card-excerpt">{item.excerpt}</p>
+                    <div class="card-actions">
+                      <span class="product-card-summary">{item.summary}</span>
+                      <a href={`/products/${item.slug}/`}>查看详情</a>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">PROJECT CONSULT</span>
+            <h2 class="detail-title">想确认这套设备是否适合你的工件</h2>
+            <p class="section-copy">带上工件图片、材质信息、当前节拍和目标效果，博恩科可以更快判断是否需要专机、数控机型还是机器人工作站。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href="/contact/">提交咨询</a>
+            <a class="button-secondary" href={`tel:${company.phone}`}>电话沟通</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

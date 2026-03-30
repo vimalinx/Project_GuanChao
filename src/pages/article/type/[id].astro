@@ -1,0 +1,532 @@
+---
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import Layout from '../../../layouts/Layout.astro';
+import { cases, company, newsArticles, products, videos } from '../../../data/site';
+import { absoluteUrl } from '../../../lib/schema';
+import {
+  getLegacyArticlesByIds,
+  getLegacyBaseTypeId,
+  getLegacyCanonicalForType,
+  getLegacyTypeIntroBody,
+  getLegacyTypePages
+} from '../../../lib/mirror-content';
+
+export function getStaticPaths() {
+  return getLegacyTypePages().map((page) => ({
+    params: { id: `${page.id}.html` },
+    props: { page }
+  }));
+}
+
+const { page } = Astro.props;
+const baseId = getLegacyBaseTypeId(page.id);
+const canonicalTarget = getLegacyCanonicalForType(baseId);
+const canonical = absoluteUrl(canonicalTarget ?? `/article/type/${page.id}.html`);
+const linkedArticles = getLegacyArticlesByIds(page.articleIds);
+const legacyIntro = getLegacyTypeIntroBody(page);
+
+const topicMap = {
+  '7-1': {
+    theme: 'about',
+    sectionLabel: '关于博恩科',
+    sectionHref: '/about/',
+    summary: '围绕公司定位、服务对象和自动化设备能力的企业介绍专题。',
+    image: '/media/company-workshop.jpg',
+    bullets: company.values
+  },
+  '16-1': {
+    theme: 'culture',
+    sectionLabel: '关于博恩科',
+    sectionHref: '/about/',
+    summary: '围绕使命、愿景与价值观整理的企业文化专题。',
+    image: '/media/company-workshop.jpg',
+    bullets: ['使命：解放劳动力，提高生产率。', '愿景：从繁忙体力劳动中解放出来，去关心家庭、环境与下一代。', '文化表达：一个人，是一支队伍；一支队伍，像一个人。']
+  },
+  '6-1': {
+    theme: 'contact',
+    sectionLabel: '联系我们',
+    sectionHref: '/contact/',
+    summary: '联系方式、地址与咨询准备信息的专题页。',
+    image: '/media/hero-machine.jpg',
+    bullets: ['联系人：赵先生', `手机：${company.phone}`, `电话：${company.landline}`, `地址：${company.address}`]
+  },
+  '8-1': {
+    theme: 'product',
+    sectionLabel: '产品方案',
+    sectionHref: '/products/',
+    summary: '面向数控自动抛光机方向的专题页，适合复杂轮廓和高一致性表面处理场景。',
+    image: '/media/product-polishing-machine.jpg',
+    bullets: ['适合复杂轨迹和多姿态抛光。', '更重视工艺复现和批次一致性。', '适合五金与复杂轮廓件表面处理。']
+  },
+  '9-1': {
+    theme: 'product',
+    sectionLabel: '产品方案',
+    sectionHref: '/products/',
+    summary: '围绕自动抛光工艺的基础型专题，强调连续作业、表面稳定与非标工装配合。',
+    image: '/media/product-polishing-machine.jpg',
+    bullets: ['适合批量抛光场景。', '重点看工件形状、节拍和目标光洁度。', '可与专用夹具和除尘系统联动。']
+  },
+  '18-1': {
+    theme: 'product',
+    sectionLabel: '产品方案',
+    sectionHref: '/products/',
+    summary: '聚焦羊角锤自动抛光机这类细分工件专机，展示专机化解决思路。',
+    image: '/media/product-polishing-machine.jpg',
+    bullets: ['解决招工难、用工贵与抛光一致性问题。', '更适合规格集中、节拍稳定的专机化需求。', '适合作为单一工件自动化升级案例参考。']
+  },
+  '19-1': {
+    theme: 'product',
+    sectionLabel: '产品方案',
+    sectionHref: '/products/',
+    summary: '自动打磨机专题页，围绕铸件去飞边、毛刺、分型线和浇冒口清理展开。',
+    image: '/media/product-casting-grinder.jpg',
+    bullets: ['面向铸造件和压铸件的核心打磨工序。', '关注节拍、一致性和粉尘工位替代。', '支持双工位与非标工装联调。']
+  },
+  '20-1': {
+    theme: 'product',
+    sectionLabel: '产品方案',
+    sectionHref: '/products/',
+    summary: '数控抛光机专题页，适合作为数控抛光工艺和机型选择的入口。',
+    image: '/media/product-polishing-machine.jpg',
+    bullets: ['更适合高复现要求的抛光场景。', '重视程序化路径和工艺沉淀。', '适用于复杂轮廓表面处理。']
+  },
+  '25-1': {
+    theme: 'product',
+    sectionLabel: '产品方案',
+    sectionHref: '/products/',
+    summary: '打磨机器人专题页，突出柔性工站与多品类工件改造能力。',
+    image: '/media/hero-machine.jpg',
+    bullets: ['适合多品类工件与柔性制造。', '可接入力控、除尘和安全围栏。', '更适合作为工位级自动化改造方案。']
+  },
+  '21-1': {
+    theme: 'case',
+    sectionLabel: '成功案例',
+    sectionHref: '/cases/',
+    summary: '以钢帽自动打磨为主题的案例专题，强调工件痛点与专机方案价值。',
+    image: '/media/product-casting-grinder.jpg',
+    bullets: ['聚焦绝缘子铁帽、钢帽类工件。', '强调多重定位与双工位同步。', '适合电力金具类客户对照评估。']
+  },
+  '27-1': {
+    theme: 'case',
+    sectionLabel: '成功案例',
+    sectionHref: '/cases/',
+    summary: '围绕沟槽管件与球铁件自动打磨场景的案例专题。',
+    image: '/media/hero-machine.jpg',
+    bullets: ['适合球铁沟槽管件等批量工件。', '突出免除部分机加工与减少人工打磨。', '适合作为节拍化改造案例参考。']
+  },
+  '23-1': {
+    theme: 'video',
+    sectionLabel: '视频中心',
+    sectionHref: '/videos/',
+    summary: '自动打磨机相关视频目录专题，用于快速理解设备动作方式。',
+    image: '/media/product-casting-grinder.jpg',
+    bullets: ['优先看工位布局与动作节拍。', '适合方案初筛阶段浏览。', '建议结合实样再判断机型方向。']
+  },
+  '24-1': {
+    theme: 'video',
+    sectionLabel: '视频中心',
+    sectionHref: '/videos/',
+    summary: '铸件自动打磨机视频专题，适合从演示角度理解铸件打磨工位。',
+    image: '/media/product-casting-grinder.jpg',
+    bullets: ['适合看铸件去毛刺与清理动作。', '能辅助判断设备形态与空间需求。', '建议结合工件样品继续评估。']
+  },
+  '26-1': {
+    theme: 'video',
+    sectionLabel: '视频中心',
+    sectionHref: '/videos/',
+    summary: '打磨机器人视频专题，突出柔性工作站的演示入口。',
+    image: '/media/hero-machine.jpg',
+    bullets: ['适合多品类工件场景。', '重点观察路径、工位与工具配置。', '适合作为机器人方案初步沟通入口。']
+  },
+  '11-1': {
+    theme: 'news',
+    sectionLabel: '新闻动态',
+    sectionHref: '/news/',
+    summary: '企业动态专题页，集中展示企业活动、应用文章和阶段性输出。',
+    image: '/media/news-upgrade.jpg',
+    bullets: ['偏企业更新、应用说明和品牌动态。', '适合快速浏览阶段性内容。', '可作为历史内容聚合入口。']
+  },
+  '12-1': {
+    theme: 'news',
+    sectionLabel: '新闻动态',
+    sectionHref: '/news/',
+    summary: '新闻动态专题页，集中展示设备知识、使用方法、维护与场景文章。',
+    image: '/media/news-upgrade.jpg',
+    bullets: ['偏设备知识、维护和应用文章。', '适合搜索流量与知识型访问。', '更适合作为历史文章聚合页。']
+  }
+} as const;
+
+const topic = topicMap[baseId as keyof typeof topicMap] ?? {
+  theme: page.kind === 'news' ? 'news' : page.kind === 'products' ? 'product' : page.kind === 'gallery' ? 'video' : 'generic',
+  sectionLabel: '历史专题页',
+  sectionHref: '/',
+  summary: page.introText || `${page.title} 历史专题访问页。`,
+  image: '/media/hero-machine.jpg',
+  bullets: ['保留原站访问路径。', '重建专题展示结构。', '补足现代站点浏览体验。']
+};
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: topic.sectionLabel, href: topic.sectionHref },
+  { label: page.title, href: `/article/type/${page.id}.html` }
+];
+
+const leadArticle = linkedArticles[0];
+const restArticles = linkedArticles.slice(1);
+
+const curatedProductMap = {
+  '8-1': products.filter((item) => item.category === 'cnc-polishing'),
+  '9-1': products.filter((item) => item.category === 'auto-polishing'),
+  '18-1': products.filter((item) => item.category === 'auto-polishing'),
+  '19-1': products.filter((item) => item.category === 'auto-grinding'),
+  '20-1': products.filter((item) => item.category === 'cnc-polishing'),
+  '25-1': products.filter((item) => item.category === 'grinding-robot')
+} as Record<string, typeof products>;
+
+const curatedCaseMap = {
+  '21-1': cases.filter((item) => item.slug === 'steel-cap-automatic-grinding'),
+  '27-1': cases.filter((item) => item.slug === 'grooved-pipe-fitting-grinding')
+} as Record<string, typeof cases>;
+
+const curatedVideoMap = {
+  '23-1': videos,
+  '24-1': videos.filter((item) => item.slug === 'casting-grinder-demo'),
+  '26-1': videos.filter((item) => item.slug === 'casting-automatic-grinding-video')
+} as Record<string, typeof videos>;
+
+const curatedNewsMap = {
+  '11-1': newsArticles.filter((item) => item.category === '企业动态'),
+  '12-1': newsArticles.filter((item) => item.category === '新闻动态')
+} as Record<string, typeof newsArticles>;
+
+const productCards = curatedProductMap[baseId] ?? [];
+const caseCards = curatedCaseMap[baseId] ?? [];
+const videoCards = curatedVideoMap[baseId] ?? [];
+const newsCards = curatedNewsMap[baseId] ?? [];
+
+const latestDate = linkedArticles.find((item) => item.date)?.date ?? '历史内容';
+const totalCount = linkedArticles.length || productCards.length || caseCards.length || videoCards.length || newsCards.length;
+const themeLabelMap = {
+  about: 'ABOUT TOPIC',
+  culture: 'CULTURE TOPIC',
+  contact: 'CONTACT TOPIC',
+  product: 'PRODUCT TOPIC',
+  case: 'CASE TOPIC',
+  video: 'VIDEO TOPIC',
+  news: 'NEWS TOPIC',
+  generic: 'ARCHIVE TOPIC'
+} as const;
+const themeLabel = themeLabelMap[topic.theme as keyof typeof themeLabelMap] ?? 'ARCHIVE TOPIC';
+---
+
+<Layout title={`${page.title} 专题`} description={topic.summary} image={topic.image} canonical={canonical} breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">{themeLabel}</span>
+          <h1>{page.title}</h1>
+          <p>{topic.summary}</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">专题信息</span>
+          <div class="page-head-tags">
+            <span>{topic.sectionLabel}</span>
+            <span>{totalCount} 项内容</span>
+            <span>{latestDate}</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="detail-layout">
+        <div class="detail-media">
+          <img src={topic.image} alt={page.title} />
+        </div>
+        <article class="detail-panel detail-panel-product">
+          <span class="meta-kicker">专题说明</span>
+          <h2>保留原站专题入口，并挂接新版整理后的内容结构</h2>
+          <p>{topic.summary}</p>
+          <div class="detail-stat-grid">
+            <article class="detail-stat-card">
+              <strong>{topic.sectionLabel}</strong>
+              <span>专题类型</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>{totalCount} 项</strong>
+              <span>关联内容</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>{latestDate}</strong>
+              <span>最近时间</span>
+            </article>
+          </div>
+          <div class="detail-list-block">
+            <strong>这个专题页的作用</strong>
+            <ul class="bullets detail-point-list">
+              <li>保留历史站点路径，减少旧收录链接失效风险。</li>
+              <li>把原站的零散内容重新放进现代企业站的浏览结构中。</li>
+              <li>把历史内容和新版整理页挂接起来，方便继续浏览。</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <section class="section">
+        <div class="summary-grid company-summary-grid">
+          {topic.bullets.map((item, index) => (
+            <article class="summary-card">
+              <span class="page-head-label">{String(index + 1).padStart(2, '0')}</span>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {page.kind === 'redirect' && page.redirectTarget ? (
+        <section class="section">
+          <article class="section-block">
+            <h2>原站重定向页面</h2>
+            <p>该地址在原站中用于跳转。新版保留这个页面，原始跳转目标为 <a class="list-link" href={page.redirectTarget}>{page.redirectTarget}</a>。</p>
+          </article>
+        </section>
+      ) : null}
+
+      {legacyIntro.hasContent ? (
+        <section class="section">
+          <article class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">历史内容补充</h2>
+                <p class="section-copy">保留原站专题页中的图文说明，但重新收纳到当前企业站的阅读结构里。</p>
+              </div>
+            </div>
+            <div class="legacy-content" set:html={legacyIntro.html} />
+          </article>
+        </section>
+      ) : null}
+
+      {topic.theme === 'about' || topic.theme === 'culture' ? (
+        <section class="section">
+          <div class="trust-grid">
+            <article class="trust-card">
+              <h3>业务定位</h3>
+              <p>{company.description}</p>
+            </article>
+            <article class="trust-card">
+              <h3>服务方式</h3>
+              <p>围绕工件评估、设备匹配、夹具联调、试样验证和交付培训展开。</p>
+            </article>
+            <article class="trust-card">
+              <h3>适配对象</h3>
+              <p>适合希望降低人工强度、稳定节拍并改善粉尘工位的制造企业。</p>
+            </article>
+          </div>
+        </section>
+      ) : null}
+
+      {topic.theme === 'contact' ? (
+        <section class="section">
+          <div class="contact-panel">
+            <article class="contact-card">
+              <h2>{company.legalName}</h2>
+              <ul class="footer-contact">
+                <li>联系人：{company.contactPerson}</li>
+                <li>手机：{company.phone}</li>
+                <li>电话：{company.landline}</li>
+                <li>地址：{company.address}</li>
+              </ul>
+            </article>
+            <article class="contact-card">
+              <h2>建议准备的信息</h2>
+              <ul class="bullets">
+                <li>工件材质、尺寸与毛刺位置</li>
+                <li>当前人工工序和目标节拍</li>
+                <li>期望达到的表面效果与良率</li>
+                <li>现场空间、除尘与上下料条件</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      ) : null}
+
+      {topic.theme === 'news' ? (
+        <>
+          {leadArticle ? (
+            <section class="section">
+              <div class="detail-layout">
+                <div class="detail-media">
+                  <img src={leadArticle.image || topic.image} alt={leadArticle.title} />
+                </div>
+                <article class="detail-panel">
+                  <h2>{leadArticle.title}</h2>
+                  <p>{leadArticle.excerpt}</p>
+                  <div class="stack-actions">
+                    <a class="button" href={`/article/${leadArticle.id}.html`}>阅读历史原文</a>
+                    <a class="button-secondary" href={topic.sectionHref}>查看新版资讯页</a>
+                  </div>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
+          {(restArticles.length > 0 || newsCards.length > 0) ? (
+            <section class="section">
+              <div class="section-header">
+                <div>
+                  <h2 class="section-title">专题文章</h2>
+                  <p class="section-copy">保留原分类页的历史内容，同时挂接新版整理过的精选文章。</p>
+                </div>
+              </div>
+              <div class="card-grid">
+                {restArticles.map((article) => (
+                  <article class="news-card">
+                    {article.image ? <img src={article.image} alt={article.title} loading="lazy" /> : null}
+                    <div class="news-card-body">
+                      <span class="card-tag">
+                        {article.category}
+                        {article.date ? ` · ${article.date}` : ''}
+                      </span>
+                      <h3>{article.title}</h3>
+                      <p>{article.excerpt}</p>
+                      <a href={`/article/${article.id}.html`}>打开历史文章</a>
+                    </div>
+                  </article>
+                ))}
+                {newsCards.map((article) => (
+                  <article class="news-card">
+                    <img src={article.image} alt={article.title} loading="lazy" />
+                    <div class="news-card-body">
+                      <span class="card-tag">
+                        {article.category} · {article.publishedAt}
+                      </span>
+                      <h3>{article.title}</h3>
+                      <p>{article.excerpt}</p>
+                      <a href={`/news/${article.slug}/`}>查看新版文章</a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </>
+      ) : null}
+
+      {topic.theme === 'product' ? (
+        <section class="section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">关联设备</h2>
+              <p class="section-copy">既保留原站产品链接，也挂接新版整理后的产品方案页。</p>
+            </div>
+          </div>
+          <div class="card-grid">
+            {linkedArticles.map((article) => (
+              <article class="news-card">
+                {article.image ? <img src={article.image} alt={article.title} loading="lazy" /> : null}
+                <div class="news-card-body">
+                  <span class="card-tag">{article.category}</span>
+                  <h3>{article.title}</h3>
+                  <p>{article.excerpt}</p>
+                  <a href={`/article/${article.id}.html`}>查看历史产品页</a>
+                </div>
+              </article>
+            ))}
+            {productCards.map((item) => (
+              <article class="product-card">
+                <a class="product-card-media" href={`/products/${item.slug}/`} aria-label={`查看 ${item.name}`}>
+                  <img src={item.image} alt={item.name} loading="lazy" />
+                  <span class="product-card-overlay">
+                    <span>查看新版方案</span>
+                  </span>
+                </a>
+                <div class="product-card-body">
+                  <span class="card-tag">{item.categoryName}</span>
+                  <h3>{item.name}</h3>
+                  <p class="product-card-excerpt">{item.excerpt}</p>
+                  <div class="card-actions">
+                    <span class="product-card-summary">{item.summary}</span>
+                    <a href={`/products/${item.slug}/`}>查看新版方案页</a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {topic.theme === 'case' ? (
+        <section class="section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">关联案例</h2>
+              <p class="section-copy">按原站案例主题升级为更现代的案例阅读结构。</p>
+            </div>
+          </div>
+          <div class="case-grid">
+            {caseCards.map((item) => (
+              <article class="case-card">
+                <img src={item.image} alt={item.name} loading="lazy" />
+                <div class="case-card-body">
+                  <span class="card-tag">{item.industry}</span>
+                  <h3>{item.name}</h3>
+                  <p>{item.excerpt}</p>
+                  <a href={`/cases/${item.slug}/`}>查看新版案例页</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {topic.theme === 'video' ? (
+        <section class="section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">关联视频</h2>
+              <p class="section-copy">把原站视频分类页升级为可直接浏览的目录页。</p>
+            </div>
+          </div>
+          <div class="video-grid">
+            {linkedArticles.map((article) => (
+              <article class="video-card">
+                <img src={article.image || topic.image} alt={article.title} loading="lazy" />
+                <div class="video-card-body">
+                  <span class="card-tag">{article.category}</span>
+                  <h3>{article.title}</h3>
+                  <p>{article.excerpt}</p>
+                  <a href={`/article/${article.id}.html`}>查看历史视频页</a>
+                </div>
+              </article>
+            ))}
+            {videoCards.map((item) => (
+              <article class="video-card">
+                <img src={item.image} alt={item.title} loading="lazy" />
+                <div class="video-card-body">
+                  <span class="card-tag">{item.category}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                  <a href={`/videos/${item.slug}/`}>打开新版视频页</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">ARCHIVE TO MODERN PAGE</span>
+            <h2 class="detail-title">如果这个历史专题和你的需求接近</h2>
+            <p class="section-copy">可以继续打开新版产品、案例、视频或资讯页，也可以直接联系博恩科，把历史入口转成真实项目沟通。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href={topic.sectionHref}>查看对应栏目</a>
+            <a class="button-secondary" href="/contact/">联系博恩科</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

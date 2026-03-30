@@ -1,0 +1,83 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, cases } from '../../data/site';
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '成功案例', href: '/cases/' }
+];
+---
+
+<Layout title="成功案例" description="查看钢帽自动打磨与沟槽管件自动打磨等应用案例。" breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">CASE STUDIES</span>
+          <h1>成功案例</h1>
+          <p>围绕原站已有案例名称重新组织，让客户从工件类型、痛点和落地方式三个维度快速对照自己的生产场景。</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">案例观察点</span>
+          <div class="page-head-tags">
+            <span>工件类型</span>
+            <span>现场挑战</span>
+            <span>落地方式</span>
+          </div>
+        </aside>
+      </div>
+
+      <section class="section">
+        <div class="summary-grid company-summary-grid">
+          <article class="summary-card">
+            <span class="page-head-label">工艺场景</span>
+            <h3>高粉尘打磨工位</h3>
+            <p>优先覆盖人工强度大、粉尘重、节拍波动明显的铸件与管件加工场景。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">方案动作</span>
+            <h3>设备与工装联动</h3>
+            <p>案例不只看设备本体，还看定位夹具、防护和节拍组织是否一起落地。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">结果判断</span>
+            <h3>稳定量产能力</h3>
+            <p>更关注一致性、连续加工能力和对熟练人工依赖的下降幅度。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-grid">
+          {cases.map((item) => (
+            <article class="case-card">
+              <img src={item.image} alt={item.name} loading="lazy" />
+              <div class="case-card-body">
+                <span class="card-tag">{item.industry}</span>
+                <h3>{item.name}</h3>
+                <p>{item.excerpt}</p>
+                <a href={`/cases/${item.slug}/`}>查看案例</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">CASE MATCHING</span>
+            <h2 class="detail-title">想判断你的工件更接近哪类案例</h2>
+            <p class="section-copy">把工件图片、当前人工工序和节拍要求发给博恩科，可以更快匹配到接近的案例方向和设备路线。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href={`tel:${company.phone}`}>电话沟通</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,125 @@
+---
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Layout from '../layouts/Layout.astro';
+import { company } from '../data/site';
+import { buildLocalBusinessSchema } from '../lib/schema';
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '联系我们', href: '/contact/' }
+];
+---
+
+<Layout
+  title="联系我们"
+  description={`联系 ${company.legalName}，咨询自动打磨机、数控自动抛光机和打磨机器人工作站方案。`}
+  breadcrumbs={breadcrumbs}
+  schema={[buildLocalBusinessSchema()]}
+>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">CONTACT</span>
+          <h1>联系我们</h1>
+          <p>如果你已经有目标工件、当前人工节拍或计划中的自动化改造项目，可以直接按下面方式联系博恩科。</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">快速联系</span>
+          <div class="page-head-tags">
+            <span>{company.contactPerson}</span>
+            <span>{company.phone}</span>
+            <span>{company.city}</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="contact-panel">
+        <article class="contact-card">
+          <span class="meta-kicker">联系方式</span>
+          <h2>{company.legalName}</h2>
+          <p>{company.tagline}</p>
+          <ul class="footer-contact">
+            <li>联系人：{company.contactPerson}</li>
+            <li>手机：{company.phone}</li>
+            <li>电话：{company.landline}</li>
+            <li>地址：{company.address}</li>
+          </ul>
+          <div class="detail-contact-strip">
+            <span>支持带工件沟通</span>
+            <span>支持现场条件说明</span>
+          </div>
+          <div class="stack-actions detail-actions">
+            <a class="button" href={`tel:${company.phone}`}>电话咨询</a>
+            <a class="button-secondary" href="/products/">先看方案</a>
+          </div>
+        </article>
+        <article class="contact-card">
+          <span class="meta-kicker">沟通准备</span>
+          <h2>建议准备的信息</h2>
+          <p>把下面这些信息准备齐，通常会比泛泛咨询更容易快速进入有效判断。</p>
+          <ul class="bullets">
+            <li>工件材质、尺寸、毛刺/浇口位置</li>
+            <li>当前人工工序和目标节拍</li>
+            <li>期望达到的表面效果与良率指标</li>
+            <li>现场可用空间、配套除尘与上下料条件</li>
+          </ul>
+        </article>
+      </div>
+
+      <section class="section">
+        <div class="summary-grid company-summary-grid">
+          <article class="summary-card">
+            <span class="page-head-label">咨询方式</span>
+            <h3>先电话沟通</h3>
+            <p>适合已经有工件、工艺问题或明确自动化改造需求的客户，效率最高。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">准备资料</span>
+            <h3>带上工件信息</h3>
+            <p>工件图片、材质、毛刺位置和当前节拍，能显著提升判断准确度。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">判断方向</span>
+            <h3>确定设备路线</h3>
+            <p>根据工件稳定性和品类变化频率，判断是专机、数控机型还是机器人工作站更合适。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">建议按这个顺序沟通</h2>
+              <p class="section-copy">把一页联系页做成有节奏的转化页，而不是只有一串电话号码。</p>
+            </div>
+          </div>
+          <div class="process-grid process-timeline">
+            <article class="process-step">
+              <span class="process-step-index">01</span>
+              <h3>发送工件信息</h3>
+              <p>先说明工件材质、尺寸、浇口或毛刺位置，以及当前人工处理方式。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">02</span>
+              <h3>说明目标节拍</h3>
+              <p>把当前产量、班产目标和希望改善的问题说清楚，便于判断自动化价值。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">03</span>
+              <h3>确认现场条件</h3>
+              <p>补充可用空间、除尘、上下料和班组配置，避免方案只停留在纸面上。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">04</span>
+              <h3>进入试样或方案</h3>
+              <p>根据工况复杂度，继续进入试样评估、设备推荐或进一步方案沟通。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

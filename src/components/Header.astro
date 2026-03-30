@@ -1,0 +1,80 @@
+---
+import { company, navigation } from '../data/site';
+---
+
+<header class="site-header">
+  <div class="topline">
+    <div class="container topline-inner">
+      <p>{company.legalName}</p>
+      <div class="topline-meta">
+        <a href={`tel:${company.phone}`}>咨询热线 {company.phone}</a>
+        <span>{company.address}</span>
+      </div>
+    </div>
+  </div>
+  <div class="container header-main" data-header-main>
+    <a class="brand" href="/" aria-label={`${company.legalName} 首页`}>
+      <img src="/media/logo.png" alt={company.name} width="42" height="42" />
+      <span>
+        <strong>{company.name}</strong>
+        <small>{company.tagline}</small>
+      </span>
+    </a>
+    <nav class="main-nav" id="site-nav" aria-label="主导航">
+      {navigation.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </nav>
+    <div class="header-actions">
+      <a class="header-cta" href="/contact/">
+        带工件咨询
+      </a>
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-label="展开导航菜单"
+        aria-controls="site-nav"
+        aria-expanded="false"
+        data-nav-toggle
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const initHeaderMenu = () => {
+      const header = document.querySelector('[data-header-main]');
+      const toggle = document.querySelector('[data-nav-toggle]');
+      if (!(header instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
+
+      const closeMenu = () => {
+        header.classList.remove('is-nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      };
+
+      toggle.addEventListener('click', () => {
+        const isOpen = header.classList.toggle('is-nav-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      header.querySelectorAll('.main-nav a').forEach((link) => {
+        link.addEventListener('click', closeMenu);
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 960) closeMenu();
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeaderMenu, { once: true });
+    } else {
+      initHeaderMenu();
+    }
+  })();
+</script>

@@ -1,0 +1,189 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, newsArticles } from '../../data/site';
+import { absoluteUrl, buildArticleSchema } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return newsArticles.map((item) => ({
+    params: { slug: item.slug },
+    props: { article: item }
+  }));
+}
+
+const { article } = Astro.props;
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '新闻动态', href: '/news/' },
+  { label: article.title, href: `/news/${article.slug}/` }
+];
+
+const canonical = absoluteUrl(`/news/${article.slug}/`);
+const keyPoints = article.bullets ?? article.body.slice(0, 3);
+const relatedArticles = newsArticles.filter((item) => item.slug !== article.slug && item.category === article.category).slice(0, 3);
+const audienceCopy =
+  article.category === '企业动态'
+    ? [
+        '正在了解某类设备方案、企业动态或落地方向的采购与技术人员。',
+        '希望快速判断某篇内容是否和当前项目有关的工厂负责人。',
+        '需要从文章跳转到具体产品方案或联系方式的搜索访问者。'
+      ]
+    : [
+        '搜索设备使用、维护、故障排查和选型方法的现场人员。',
+        '正在整理知识库、培训资料或设备保养清单的管理人员。',
+        '通过搜索进入，希望先看文章再决定是否咨询方案的访客。'
+      ];
+---
+
+<Layout
+  title={article.title}
+  description={article.excerpt}
+  image={article.image}
+  canonical={canonical}
+  breadcrumbs={breadcrumbs}
+  schema={[
+    buildArticleSchema({
+      title: article.title,
+      description: article.excerpt,
+      image: article.image,
+      url: canonical,
+      datePublished: article.publishedAt,
+      type: 'NewsArticle'
+    })
+  ]}
+>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">{article.category}</span>
+          <h1>{article.title}</h1>
+          <p>{article.excerpt}</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">发布信息</span>
+          <div class="page-head-tags">
+            <span>{article.publishedAt}</span>
+            <span>{company.legalName}</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="article-stage">
+        <div class="article-main">
+          <div class="detail-media article-hero-media">
+            <img src={article.image} alt={article.title} />
+          </div>
+
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">文章导读</h2>
+                <p class="section-copy">先用一屏内容交代文章主题、使用价值和关键结论，方便搜索访问者快速判断是否继续阅读。</p>
+              </div>
+            </div>
+            <div class="article-intro">
+              {article.body.slice(0, 2).map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+            <div class="card-grid keypoint-grid">
+              {keyPoints.map((item, index) => (
+                <article class="summary-card keypoint-card">
+                  <span class="page-head-label">要点 {String(index + 1).padStart(2, '0')}</span>
+                  <p>{item}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">正文内容</h2>
+                <p class="section-copy">保留文章的阅读完整度，同时把正文排版整理成更适合企业官网与搜索摘要抽取的结构。</p>
+              </div>
+            </div>
+            <article class="article-richtext">
+              {article.body.map((paragraph) => <p>{paragraph}</p>)}
+              {article.bullets && (
+                <ul class="bullets article-rich-list">
+                  {article.bullets.map((item) => <li>{item}</li>)}
+                </ul>
+              )}
+            </article>
+          </section>
+
+          {relatedArticles.length > 0 ? (
+            <section class="section-block">
+              <div class="section-header">
+                <div>
+                  <h2 class="section-title">继续阅读</h2>
+                  <p class="section-copy">延伸到同栏目内容，方便继续了解相关设备、应用场景和维护主题。</p>
+                </div>
+              </div>
+              <div class="news-grid">
+                {relatedArticles.map((item) => (
+                  <article class="news-card">
+                    <img src={item.image} alt={item.title} loading="lazy" />
+                    <div class="news-card-body">
+                      <span class="card-tag">
+                        {item.category} · {item.publishedAt}
+                      </span>
+                      <h3>{item.title}</h3>
+                      <p>{item.excerpt}</p>
+                      <a href={`/news/${item.slug}/`}>阅读全文</a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </div>
+
+        <aside class="article-side">
+          <article class="detail-panel">
+            <span class="meta-kicker">文章信息</span>
+            <h2>企业资讯详情</h2>
+            <p>围绕发布时间、栏目、发布主体和阅读重点整理文章信息，方便快速判断是否需要继续阅读或咨询。</p>
+            <div class="article-meta-list">
+              <div class="meta-chip">
+                <strong>栏目</strong>
+                <p>{article.category}</p>
+              </div>
+              <div class="meta-chip">
+                <strong>发布时间</strong>
+                <p>{article.publishedAt}</p>
+              </div>
+              <div class="meta-chip">
+                <strong>发布主体</strong>
+                <p>{company.legalName}</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="detail-panel">
+            <h2>本文适合谁看</h2>
+            <ul class="bullets">
+              {audienceCopy.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+
+          <article class="detail-panel">
+            <h2>如果你在做设备选型</h2>
+            <p>可以直接带着工件图片、材质信息、当前节拍和现场问题联系博恩科，让文章阅读直接衔接到方案沟通。</p>
+            <div class="stack-actions detail-actions">
+              <a class="button" href="/products/">查看产品方案</a>
+              <a class="button-secondary" href="/contact/">联系博恩科</a>
+            </div>
+            <div class="detail-contact-strip">
+              <span>联系人：{company.contactPerson}</span>
+              <span>手机：{company.phone}</span>
+              <span>电话：{company.landline}</span>
+            </div>
+          </article>
+        </aside>
+      </div>
+    </div>
+  </div>
+</Layout>

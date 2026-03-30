@@ -1,0 +1,63 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { productCategories, products } from '../../data/site';
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '产品方案', href: '/products/' }
+];
+---
+
+<Layout
+  title="产品方案"
+  description="查看博恩科数控自动抛光机、自动抛光机、自动打磨机和打磨机器人工作站等产品方案。"
+  breadcrumbs={breadcrumbs}
+>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <h1>产品方案</h1>
+          <p>围绕原站的四大产品分类重新整理，让采购、工艺和生产团队更快理解每种方案适合什么工况。</p>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="summary-grid">
+          {productCategories.map((item) => (
+            <article class="summary-card">
+              <h3>{item.name}</h3>
+              <p>{products.filter((product) => product.category === item.slug).length} 个重点方案，覆盖专机、数控与机器人工作站。</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card-grid product-gallery-grid">
+          {products.map((product) => (
+            <article class="product-card">
+              <a class="product-card-media" href={`/products/${product.slug}/`} aria-label={`查看 ${product.name}`}>
+                <img src={product.image} alt={product.name} loading="lazy" />
+                <span class="product-card-overlay">
+                  <span>进一步了解</span>
+                </span>
+              </a>
+              <div class="product-card-body">
+                <span class="card-tag">{product.categoryName}</span>
+                <h3>{product.name}</h3>
+                <p class="product-card-excerpt">{product.excerpt}</p>
+                <div class="card-actions">
+                  <span class="product-card-summary">{product.summary}</span>
+                  <a href={`/products/${product.slug}/`}>查看详情</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,182 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, cases } from '../../data/site';
+
+export function getStaticPaths() {
+  return cases.map((item) => ({
+    params: { slug: item.slug },
+    props: { caseStudy: item }
+  }));
+}
+
+const { caseStudy } = Astro.props;
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '成功案例', href: '/cases/' },
+  { label: caseStudy.name, href: `/cases/${caseStudy.slug}/` }
+];
+
+const relatedCases = cases.filter((item) => item.slug !== caseStudy.slug).slice(0, 2);
+---
+
+<Layout title={caseStudy.name} description={caseStudy.excerpt} image={caseStudy.image} breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">{caseStudy.industry}</span>
+          <h1>{caseStudy.name}</h1>
+          <p>{caseStudy.excerpt}</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">案例观察点</span>
+          <div class="page-head-tags">
+            <span>现场挑战</span>
+            <span>方案动作</span>
+            <span>结果输出</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="detail-layout">
+        <div class="detail-media">
+          <img src={caseStudy.image} alt={caseStudy.name} />
+        </div>
+        <article class="detail-panel detail-panel-product">
+          <span class="meta-kicker">案例概览</span>
+          <h2>适用行业：{caseStudy.industry}</h2>
+          <p>{caseStudy.excerpt}</p>
+          <div class="detail-stat-grid">
+            <article class="detail-stat-card">
+              <strong>高粉尘工位</strong>
+              <span>典型改造背景</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>设备 + 工装</strong>
+              <span>方案落地方式</span>
+            </article>
+            <article class="detail-stat-card">
+              <strong>连续量产</strong>
+              <span>交付目标</span>
+            </article>
+          </div>
+          <div class="detail-list-block">
+            <strong>这个案例关注什么</strong>
+            <ul class="bullets detail-point-list">
+              <li>人工打磨波动、粉尘和节拍压力是否明显。</li>
+              <li>是否需要专机化定位和夹具来保证重复加工。</li>
+              <li>项目结果是否能够支撑连续批量生产。</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">案例拆解</h2>
+              <p class="section-copy">把案例按“挑战、动作、结果”拆开，更接近客户真正会比对的决策顺序。</p>
+            </div>
+          </div>
+          <div class="outcome-grid">
+            <article class="summary-card case-story-card">
+              <span class="page-head-label">现场挑战</span>
+              <ul class="bullets">
+                {caseStudy.challenge.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+            <article class="summary-card case-story-card">
+              <span class="page-head-label">解决方案</span>
+              <ul class="bullets">
+                {caseStudy.solution.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+            <article class="summary-card case-story-card">
+              <span class="page-head-label">项目结果</span>
+              <ul class="bullets">
+                {caseStudy.outcomes.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-block">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">典型落地流程</h2>
+              <p class="section-copy">用案例视角说明项目是怎么一步步从现场问题走到可交付结果的。</p>
+            </div>
+          </div>
+          <div class="process-grid process-timeline">
+            <article class="process-step">
+              <span class="process-step-index">01</span>
+              <h3>确认问题</h3>
+              <p>先确认粉尘、人工强度、返工率和节拍瓶颈是否已经影响交付稳定性。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">02</span>
+              <h3>确定设备动作</h3>
+              <p>围绕工件定位、打磨路径、防护和除尘组织设备与工装方案。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">03</span>
+              <h3>联调验证</h3>
+              <p>把节拍、一致性和现场适配条件一起调试，确保不是只在单次演示里有效。</p>
+            </article>
+            <article class="process-step">
+              <span class="process-step-index">04</span>
+              <h3>稳定交付</h3>
+              <p>最终目标是让案例能对应到稳定量产，而不是停留在一次性的试制改善。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {relatedCases.length > 0 ? (
+        <section class="section">
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">相关案例</h2>
+                <p class="section-copy">继续对照其他工件或行业场景，方便快速判断自己的项目更接近哪种案例路径。</p>
+              </div>
+            </div>
+            <div class="case-grid">
+              {relatedCases.map((item) => (
+                <article class="case-card">
+                  <img src={item.image} alt={item.name} loading="lazy" />
+                  <div class="case-card-body">
+                    <span class="card-tag">{item.industry}</span>
+                    <h3>{item.name}</h3>
+                    <p>{item.excerpt}</p>
+                    <a href={`/cases/${item.slug}/`}>查看案例</a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">CASE TO PROJECT</span>
+            <h2 class="detail-title">如果你的工件和这个案例接近</h2>
+            <p class="section-copy">直接带上工件图片、人工节拍和现场限制条件来沟通，通常比只问设备价格更容易得到有效判断。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href={`tel:${company.phone}`}>电话沟通</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

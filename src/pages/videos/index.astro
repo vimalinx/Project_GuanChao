@@ -1,0 +1,83 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, videos } from '../../data/site';
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: '视频中心', href: '/videos/' }
+];
+---
+
+<Layout title="视频中心" description="查看博恩科自动打磨机与相关设备的视频演示。" breadcrumbs={breadcrumbs}>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">VIDEO CENTER</span>
+          <h1>视频中心</h1>
+          <p>原站的视频内容被单独整理成更易浏览的目录页，方便客户直接进入演示页面查看设备动作方式。</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">观看重点</span>
+          <div class="page-head-tags">
+            <span>工位布局</span>
+            <span>设备动作</span>
+            <span>适配场景</span>
+          </div>
+        </aside>
+      </div>
+
+      <section class="section">
+        <div class="summary-grid company-summary-grid">
+          <article class="summary-card">
+            <span class="page-head-label">适合谁看</span>
+            <h3>先看动作再沟通</h3>
+            <p>适合还没确定设备路线，但想先通过视频理解动作方式和工位形态的客户。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">怎么看</span>
+            <h3>重点看工位与节拍</h3>
+            <p>建议优先观察工件姿态、打磨路径、防护空间和上下料组织方式，而不是只看单个镜头。</p>
+          </article>
+          <article class="summary-card">
+            <span class="page-head-label">看完之后</span>
+            <h3>回到工件判断</h3>
+            <p>视频更适合做方向初筛，最终仍然需要结合工件样品、节拍目标和现场条件来判断。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="video-grid">
+          {videos.map((item) => (
+            <article class="video-card">
+              <img src={item.image} alt={item.title} loading="lazy" />
+              <div class="video-card-body">
+                <span class="card-tag">{item.category}</span>
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+                <a href={`/videos/${item.slug}/`}>打开视频页</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="cta-strip">
+          <div class="cta-copy">
+            <span class="cta-kicker">VIDEO TO CONSULT</span>
+            <h2 class="detail-title">看完视频想判断是否适合你的工件</h2>
+            <p class="section-copy">直接带着工件图片、材质和当前人工工序来沟通，会比只看演示视频更快进入有效判断。</p>
+          </div>
+          <div class="hero-actions cta-actions-panel">
+            <a class="button" href="/contact/">联系博恩科</a>
+            <a class="button-secondary" href={`tel:${company.phone}`}>电话沟通</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

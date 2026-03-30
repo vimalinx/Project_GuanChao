@@ -1,0 +1,358 @@
+---
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Layout from '../../layouts/Layout.astro';
+import { company, newsArticles, products, videos } from '../../data/site';
+import { absoluteUrl, buildArticleSchema } from '../../lib/schema';
+import {
+  getLegacyArticleBody,
+  getLegacyArticleHighlights,
+  getLegacyArticleTheme,
+  getLegacyArticles,
+  getLegacyCanonicalForArticle,
+  getLegacyRelatedArticles,
+  getLegacySection
+} from '../../lib/mirror-content';
+
+export function getStaticPaths() {
+  return getLegacyArticles().map((article) => ({
+    params: { id: `${article.id}.html` },
+    props: { article }
+  }));
+}
+
+const { article } = Astro.props;
+const section = getLegacySection(article.category, Boolean(article.embedUrl));
+const theme = getLegacyArticleTheme(article.category, Boolean(article.embedUrl));
+const canonicalTarget = getLegacyCanonicalForArticle(article.id);
+const canonical = absoluteUrl(canonicalTarget ?? `/article/${article.id}.html`);
+const image = article.image || '/media/hero-machine.jpg';
+const highlights = getLegacyArticleHighlights(article);
+const relatedArticles = getLegacyRelatedArticles(article);
+const legacyBody = getLegacyArticleBody(article);
+
+const breadcrumbs = [
+  { label: '首页', href: '/' },
+  { label: section.label, href: section.href },
+  { label: article.title, href: `/article/${article.id}.html` }
+];
+
+const themeCopy = {
+  news: {
+    label: '历史资讯文章',
+    summary: '适合承接搜索流量、知识型查询和设备使用场景阅读。',
+    actionLabel: '查看资讯栏目',
+    actionHref: '/news/'
+  },
+  product: {
+    label: '历史产品资料',
+    summary: '更接近产品介绍、工艺说明和应用设备资料页。',
+    actionLabel: '查看产品方案',
+    actionHref: '/products/'
+  },
+  video: {
+    label: '历史视频内容',
+    summary: '以设备演示和运行画面为核心，适合方案初筛阶段浏览。',
+    actionLabel: '查看视频中心',
+    actionHref: '/videos/'
+  },
+  generic: {
+    label: '历史站点内容',
+    summary: '保留原站内容访问路径，并补足更现代的阅读结构。',
+    actionLabel: '返回首页',
+    actionHref: '/'
+  }
+}[theme];
+
+const description = article.excerpt || `${article.title}。${themeCopy.summary}`;
+
+const mappedProduct =
+  canonicalTarget && canonicalTarget.startsWith('/products/')
+    ? products.find((item) => canonicalTarget.includes(item.slug))
+    : null;
+
+const mappedNews =
+  canonicalTarget && canonicalTarget.startsWith('/news/')
+    ? newsArticles.find((item) => canonicalTarget.includes(item.slug))
+    : null;
+
+const mappedVideo =
+  canonicalTarget && canonicalTarget.startsWith('/videos/')
+    ? videos.find((item) => canonicalTarget.includes(item.slug))
+    : null;
+
+const mappedContent = mappedProduct ?? mappedNews ?? mappedVideo;
+const themeLabelMap = {
+  news: 'ARCHIVE NEWS',
+  product: 'ARCHIVE PRODUCT',
+  video: 'ARCHIVE VIDEO',
+  generic: 'ARCHIVE PAGE'
+} as const;
+const themeLabel = themeLabelMap[theme];
+const audienceMap = {
+  news: [
+    '搜索设备知识、维护和使用方法的访问者。',
+    '想快速了解某类工艺场景的生产和技术人员。',
+    '需要做内容检索和站内跳转的老链接访问者。'
+  ],
+  product: [
+    '在比对专机、数控机型和机器人方案的采购或技术人员。',
+    '需要快速了解设备适配场景与方向的工厂负责人。',
+    '从历史链接进入旧产品资料页的访问者。'
+  ],
+  video: [
+    '希望先看动作演示再判断是否咨询的客户。',
+    '正在比对设备工位形式和运行方式的访问者。',
+    '需要保留原视频链接可访问性的老链接访问者。'
+  ],
+  generic: ['需要访问原站历史资料的访客。', '从历史链接进入旧页面的访问者。']
+} as const;
+const bridgeCopy = mappedProduct
+  ? {
+      title: mappedProduct.name,
+      summary: mappedProduct.summary,
+      label: '对应新版产品方案',
+      href: canonicalTarget as string
+    }
+  : mappedNews
+    ? {
+        title: mappedNews.title,
+        summary: mappedNews.excerpt,
+        label: '对应新版文章页',
+        href: canonicalTarget as string
+      }
+    : mappedVideo
+      ? {
+          title: mappedVideo.title,
+          summary: mappedVideo.summary,
+          label: '对应新版视频页',
+          href: canonicalTarget as string
+        }
+      : null;
+---
+
+<Layout
+  title={article.title}
+  description={description}
+  image={image}
+  canonical={canonical}
+  breadcrumbs={breadcrumbs}
+  schema={[
+    buildArticleSchema({
+      title: article.title,
+      description,
+      image,
+      url: canonical,
+      datePublished: article.date || '2019-01-01',
+      type: 'Article'
+    })
+  ]}
+>
+  <div class="page-shell">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="page-head">
+        <div>
+          <span class="page-eyebrow">{themeLabel}</span>
+          <h1>{article.title}</h1>
+          <p>{description}</p>
+        </div>
+        <aside class="page-head-side">
+          <span class="page-head-label">历史内容信息</span>
+          <div class="page-head-tags">
+            <span>{themeCopy.label}</span>
+            <span>{article.date || '历史内容'}</span>
+            <span>/article/{article.id}.html</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="article-stage">
+        <div class="article-main">
+          <div class="detail-media article-hero-media">
+            {image ? (
+              <img src={image} alt={article.title} />
+            ) : article.embedUrl ? (
+              <iframe src={article.embedUrl} title={article.title} allowfullscreen loading="lazy"></iframe>
+            ) : (
+              <img src="/media/hero-machine.jpg" alt={article.title} />
+            )}
+          </div>
+
+          <section class="section-block">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">内容摘要</h2>
+                <p class="section-copy">从原文中提取的关键信息，方便采购、工艺和生产角色先快速浏览。</p>
+              </div>
+            </div>
+            <div class="summary-grid">
+              {highlights.map((item, index) => (
+                <article class="summary-card">
+                  <span class="page-head-label">要点 {String(index + 1).padStart(2, '0')}</span>
+                  <p>{item}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          {article.embedUrl ? (
+            <section class="section-block">
+              <div class="section-header">
+                <div>
+                  <h2 class="section-title">历史视频入口</h2>
+                  <p class="section-copy">外部播放器兼容性不稳定，这里保留封面预览和原始视频入口，避免页面出现黑屏或空白区块。</p>
+                </div>
+              </div>
+              <div class="legacy-video-preview">
+                <div class="detail-media legacy-video-poster">
+                  <img src={image} alt={article.title} />
+                </div>
+                <article class="summary-card legacy-video-note">
+                  <span class="page-head-label">VIDEO LINK</span>
+                  <h3>原始视频仍可访问，页面优先展示稳定预览</h3>
+                  <p>如果你需要直接查看历史演示视频，可以从这里跳转到原始播放链接，或继续进入整理后的新版内容页。</p>
+                  <div class="stack-actions detail-actions">
+                    <a class="button" href={article.embedUrl} target="_blank" rel="noreferrer">打开原始视频</a>
+                    <a class="button-secondary" href={canonicalTarget ?? themeCopy.actionHref}>
+                      {mappedContent && canonicalTarget ? '查看对应新版页面' : themeCopy.actionLabel}
+                    </a>
+                  </div>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
+          {legacyBody.hasContent ? (
+            <section class="section-block">
+              <div class="section-header">
+                <div>
+                  <h2 class="section-title">文章正文</h2>
+                  <p class="section-copy">
+                    {article.embedUrl
+                      ? '保留原站图文正文，外部视频播放器已单独收纳为稳定入口。'
+                      : '保留原站正文内容，但重新放入现代阅读模板中。'}
+                  </p>
+                </div>
+              </div>
+              <article class="legacy-content" set:html={legacyBody.html} />
+            </section>
+          ) : null}
+
+          {bridgeCopy ? (
+            <section class="section-block">
+              <div class="section-header">
+                <div>
+                  <h2 class="section-title">对应新版内容</h2>
+                  <p class="section-copy">如果你希望继续浏览整理后的新版页面，可以直接从这里跳转。</p>
+                </div>
+              </div>
+              <div class="summary-grid company-summary-grid">
+                <article class="summary-card">
+                  <span class="page-head-label">{bridgeCopy.label}</span>
+                  <h3>{bridgeCopy.title}</h3>
+                  <p>{bridgeCopy.summary}</p>
+                  <div class="stack-actions detail-actions">
+                    <a class="button" href={bridgeCopy.href}>打开新版页面</a>
+                    <a class="button-secondary" href={themeCopy.actionHref}>{themeCopy.actionLabel}</a>
+                  </div>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
+          {relatedArticles.length > 0 ? (
+            <section class="section-block">
+              <div class="section-header">
+                <div>
+                  <h2 class="section-title">相关文章</h2>
+                  <p class="section-copy">优先推荐同类历史内容，方便继续浏览同主题资料。</p>
+                </div>
+              </div>
+              <div class="card-grid">
+                {relatedArticles.map((item) => (
+                  <article class="news-card">
+                    {item.image ? <img src={item.image} alt={item.title} loading="lazy" /> : null}
+                    <div class="news-card-body">
+                      <span class="card-tag">
+                        {item.category}
+                        {item.date ? ` · ${item.date}` : ''}
+                      </span>
+                      <h3>{item.title}</h3>
+                      <p>{item.excerpt}</p>
+                      <a href={`/article/${item.id}.html`}>继续阅读</a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section class="section">
+            <div class="cta-strip">
+              <div class="cta-copy">
+                <span class="cta-kicker">LEGACY TO MODERN PAGE</span>
+                <h2 class="detail-title">如果这篇历史内容和你的工件需求接近</h2>
+                <p class="section-copy">可以继续看新版产品、资讯或视频页，也可以直接联系博恩科，把历史搜索入口转成真实项目沟通。</p>
+              </div>
+              <div class="hero-actions cta-actions-panel">
+                <a class="button" href="/contact/">联系博恩科</a>
+                <a class="button-secondary" href={themeCopy.actionHref}>{themeCopy.actionLabel}</a>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="article-side">
+          <article class="detail-panel detail-panel-product">
+            <span class="meta-kicker">{themeCopy.label}</span>
+            <h2>保留旧站链接，同时补足现代浏览结构</h2>
+            <p>{themeCopy.summary}</p>
+            <div class="detail-stat-grid">
+              <article class="detail-stat-card">
+                <strong>{article.category}</strong>
+                <span>栏目</span>
+              </article>
+              <article class="detail-stat-card">
+                <strong>{article.date || '历史内容'}</strong>
+                <span>发布日期</span>
+              </article>
+              <article class="detail-stat-card">
+                <strong>{article.id}</strong>
+                <span>历史编号</span>
+              </article>
+            </div>
+            <div class="stack-actions detail-actions">
+              <a class="button" href={themeCopy.actionHref}>{themeCopy.actionLabel}</a>
+              {mappedContent && canonicalTarget ? (
+                <a class="button-secondary" href={canonicalTarget}>查看对应新版页面</a>
+              ) : null}
+            </div>
+          </article>
+
+          <article class="detail-panel">
+            <h2>适合谁看</h2>
+            <ul class="bullets">
+              {audienceMap[theme].map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </article>
+
+          <article class="detail-panel">
+            <h2>联系博恩科</h2>
+            <ul class="footer-contact">
+              <li>联系人：{company.contactPerson}</li>
+              <li>手机：{company.phone}</li>
+              <li>电话：{company.landline}</li>
+              <li>地址：{company.address}</li>
+            </ul>
+            <div class="stack-actions detail-actions">
+              <a class="button" href="/contact/">联系咨询</a>
+              <a class="button-secondary" href={`tel:${company.phone}`}>电话沟通</a>
+            </div>
+          </article>
+        </aside>
+      </div>
+    </div>
+  </div>
+</Layout>

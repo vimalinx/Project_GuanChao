@@ -1,0 +1,50 @@
+---
+import { company, navigation } from '../data/site';
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand-panel">
+      <a class="footer-brand" href="/" aria-label={`${company.legalName} 首页`}>
+        <img src="/media/logo.png" alt={company.name} width="44" height="44" />
+        <span>
+          <strong>{company.name}</strong>
+          <small>{company.tagline}</small>
+        </span>
+      </a>
+      <h2>{company.legalName}</h2>
+      <p>{company.description}</p>
+      <div class="footer-hotline">
+        <span>咨询热线</span>
+        <a href={`tel:${company.phone}`}>{company.phone}</a>
+      </div>
+    </div>
+    <div class="footer-column">
+      <h2>栏目导航</h2>
+      <ul class="footer-links">
+        {navigation.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer-column footer-contact-panel">
+      <h2>联系信息</h2>
+      <ul class="footer-contact">
+        <li>联系人：{company.contactPerson}</li>
+        <li>手机：{company.phone}</li>
+        <li>电话：{company.landline}</li>
+        <li>地址：{company.address}</li>
+      </ul>
+      <div class="footer-quick-actions">
+        <a class="button" href="/contact/">提交需求</a>
+        <a class="button-secondary" href="/products/">查看产品</a>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>{company.icp}</span>
+    <a href="/sitemap.xml">sitemap.xml</a>
+  </div>
+</footer>
