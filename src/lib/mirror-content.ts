@@ -26,7 +26,9 @@ export type LegacyTypePage = {
 };
 
 const SITE_ROOT = process.cwd();
-const MIRROR_ROOT = path.resolve(SITE_ROOT, '../site-mirror/boenke.cn/www.boenke.cn');
+const LOCAL_MIRROR_ROOT = path.resolve(SITE_ROOT, 'legacy-mirror/boenke.cn/www.boenke.cn');
+const EXTERNAL_MIRROR_ROOT = path.resolve(SITE_ROOT, '../site-mirror/boenke.cn/www.boenke.cn');
+const MIRROR_ROOT = existsSync(LOCAL_MIRROR_ROOT) ? LOCAL_MIRROR_ROOT : EXTERNAL_MIRROR_ROOT;
 const PUBLIC_ROOT = path.resolve(SITE_ROOT, 'public');
 
 let articleCache: LegacyArticle[] | undefined;
