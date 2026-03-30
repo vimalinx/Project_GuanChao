@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 
 type Category = {
   slug: string;
@@ -35,7 +35,7 @@ export default function ProductTabs({ categories, products }: Props) {
   );
 
   return (
-    <div className="catalog-tabs">
+    <div className="catalog-tabs product-tabs-stage" data-reveal="section">
       <div className="tab-row" role="tablist" aria-label="产品分类切换">
         {categories.map((category) => (
           <button
@@ -50,9 +50,9 @@ export default function ProductTabs({ categories, products }: Props) {
           </button>
         ))}
       </div>
-      <div className="product-card-grid">
-        {visibleProducts.map((product) => (
-          <article className="product-card" key={product.slug}>
+      <div className="product-card-grid" key={activeCategory}>
+        {visibleProducts.map((product, index) => (
+          <article className="product-card" key={product.slug} style={{ '--motion-index': index } as CSSProperties}>
             <a
               className="product-card-media"
               href={withBase(`/products/${product.slug}/`)}
