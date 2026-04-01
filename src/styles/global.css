@@ -2343,6 +2343,10 @@ html.motion-enhanced [data-reveal].is-visible {
     display: none;
   }
 
+  .page-shell {
+    padding: 1.4rem 0 2rem;
+  }
+
   .header-main {
     padding: 0.75rem 0;
     gap: 0.55rem;
@@ -2475,6 +2479,52 @@ html.motion-enhanced [data-reveal].is-visible {
     padding: 0.85rem 0 1.35rem;
   }
 
+  .breadcrumbs ol {
+    gap: 0.25rem 0.5rem;
+    font-size: 0.82rem;
+  }
+
+  .breadcrumbs li + li::before {
+    margin-right: 0.5rem;
+  }
+
+  .page-head {
+    gap: 0.85rem;
+    padding: 0.9rem 0 0.35rem;
+  }
+
+  .page-head h1 {
+    font-size: clamp(1.62rem, 8.1vw, 2.24rem);
+    line-height: 1.08;
+  }
+
+  .page-head p {
+    margin-top: 0.5rem;
+    font-size: 0.92rem;
+    line-height: 1.68;
+  }
+
+  .page-eyebrow,
+  .page-head-label {
+    min-height: 24px;
+    padding: 0 0.45rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  .page-head-side {
+    gap: 0.65rem;
+    padding: 0.9rem;
+  }
+
+  .page-head-tags span,
+  .detail-contact-strip span {
+    min-height: 30px;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
   .section-header {
     margin-bottom: 0.75rem;
     padding-bottom: 0.75rem;
@@ -2564,6 +2614,87 @@ html.motion-enhanced [data-reveal].is-visible {
     gap: 0.85rem;
   }
 
+  .detail-layout {
+    gap: 0.85rem;
+    margin-top: 0.85rem;
+  }
+
+  .article-stage,
+  .article-main,
+  .article-side,
+  .detail-panel-product,
+  .article-meta-list {
+    gap: 0.85rem;
+  }
+
+  .detail-panel::before,
+  .detail-media::before {
+    inset: 7px;
+  }
+
+  .detail-panel::after,
+  .detail-media::after {
+    width: 84px;
+    height: 84px;
+  }
+
+  .detail-panel h2,
+  .detail-panel-product h2 {
+    font-size: 1.04rem;
+    line-height: 1.5;
+  }
+
+  .detail-media {
+    box-shadow: 0 12px 24px rgba(8, 61, 115, 0.08);
+  }
+
+  .detail-media img {
+    padding: 0.8rem;
+  }
+
+  .detail-media iframe {
+    min-height: 220px;
+  }
+
+  .article-hero-media {
+    min-height: 0;
+  }
+
+  .detail-stat-grid {
+    gap: 0.65rem;
+  }
+
+  .detail-stat-card,
+  .spec-card,
+  .keypoint-card {
+    padding: 0.9rem;
+  }
+
+  .detail-list-block,
+  .detail-contact-strip {
+    padding-top: 0.85rem;
+  }
+
+  .meta-chip {
+    padding-top: 0.65rem;
+  }
+
+  .detail-actions {
+    margin-top: 0.2rem;
+  }
+
+  .article-intro {
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .article-intro p,
+  .article-richtext p,
+  .article-richtext li {
+    font-size: 0.94rem;
+    line-height: 1.82;
+  }
+
   .capability-strip .stat,
   .process-timeline .process-step,
   .faq-card {
@@ -2610,6 +2741,10 @@ html.motion-enhanced [data-reveal].is-visible {
     display: none;
   }
 
+  .page-shell {
+    padding-top: 1.25rem;
+  }
+
   .header-main {
     grid-template-columns: minmax(0, 1fr) auto;
   }
@@ -2618,6 +2753,18 @@ html.motion-enhanced [data-reveal].is-visible {
     min-height: 38px;
     padding: 0 0.6rem;
     font-size: 0.78rem;
+  }
+
+  .page-head h1 {
+    font-size: clamp(1.5rem, 8vw, 1.92rem);
+  }
+
+  .page-head-side {
+    padding: 0.82rem;
+  }
+
+  .detail-media img {
+    padding: 0.72rem;
   }
 
   .hero-stage-kicker {
